@@ -20,7 +20,7 @@ Option Explicit
 'データソースとなるレコードセットはカーソルロケーションをadUseClientに設定してください。
 'Copyright (c) 2016 TskGunGun
 'Released under the MIT license
-'https://github.com/TskGunGun/
+'https://github.com/TSKGunGun/Xls2XlsTemplator
 '
 '本ソフトウェアは自由な変更を認めます。また、コピー及び再配布・商用利用など自由に使ってください。
 '再配布する場合、本ライセンス全文をソースコード、もしくはライセンス表示ファイルなどに掲載してください。
@@ -180,14 +180,3 @@ Private Function ValidationParam() As Boolean
     ValidationParam = ValidationParam And BaseCell_Row <> 0
     ValidationParam = ValidationParam And BaseCell_Column <> 0
 End Function
-
-Public Sub ArrayRemove(ByRef TargetArray As Variant, ByVal deleteIndex As Integer)
-    Dim i As Integer
-
-    For i = deleteIndex To UBound(TargetArray) - 1
-        TargetArray(i) = TargetArray(i + 1)
-    Next i
-
-    ReDim Preserve TargetArray(UBound(TargetArray) - 1)
-
-End Sub
