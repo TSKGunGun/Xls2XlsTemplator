@@ -10,20 +10,20 @@ Attribute VB_Exposed = False
 Option Explicit
 
 'CXls2XlsTemplator
-'�ȈՓI�ȃe���v���[�g�N���X�ł��B�P�̃N���X�Ŋ����ł���悤�ɐ݌v����Ă��܂��B
+'簡易的なテンプレートクラスです。１つのクラスで完結できるように設計されています。
 '
-'BaseCell������̊�Z���ɂȂ�܂��B���Ƃ���A1���w�肵���ꍇ�AA1����Ƀe���v���[�g�𔽉f���܂��B
-'�o�͐�V�[�g�̃N���A�͍s���܂���B�K���N���A���Ă��������B�����Ɏ��s�����ꍇ�A���[���o�b�N���s�����̏�Ԃɖ߂�܂��B
-'�e���v���[�g�̃w�b�_�[�����E�A�C�e�������E�t�b�^�[�����͂��ׂĂP�̃V�[�g�ɐݒ肵�Ă��������B
-'�Ȃ��A�w�b�_�[����уt�b�^�[�͐ݒ肵�Ȃ��Ă��\���܂���B���̏ꍇ�A��������A�C�e���̈�̐擪�����f����܂��B
-'�A�C�e���̈�Ńf�[�^��ݒ肷���̓f�[�^�\�[�X�̃��R�[�h�Z�b�g�̃t�B�[���h����ݒ肵�Ă��������B
-'�f�[�^�\�[�X�ƂȂ郌�R�[�h�Z�b�g�̓J�[�\�����P�[�V������adUseClient�ɐݒ肵�Ă��������B
+'BaseCellが左上の基準セルになります。たとえばA1を指定した場合、A1を基準にテンプレートを反映します。
+'出力先シートのクリアは行いません。適時クリアしてください。処理に失敗した場合、ロールバックを行い元の状態に戻ります。
+'テンプレートのヘッダー部分・アイテム部分・フッター部分はすべて１つのシートに設定してください。
+'なお、ヘッダーおよびフッターは設定しなくても構いません。その場合、左上基準からアイテム領域の先頭が反映されます。
+'アイテム領域でデータを設定する列はデータソースのレコードセットのフィールド名を設定してください。
+'データソースとなるレコードセットはカーソルロケーションをadUseClientに設定してください。
 'Copyright (c) 2016 TskGunGun
 'Released under the MIT license
 'https://github.com/TSKGunGun/Xls2XlsTemplator
 '
-'�{�\�t�g�E�F�A�͎��R�ȕύX��F�߂܂��B�܂��A�R�s�[�y�эĔz�z�E���p���p�Ȃǎ��R�Ɏg���Ă��������B
-'�Ĕz�z����ꍇ�A�{���C�Z���X�S�����\�[�X�R�[�h�A�������̓��C�Z���X�\���t�@�C���ȂǂɌf�ڂ��Ă��������B
+'本ソフトウェアは自由な変更を認めます。また、コピー及び再配布・商用利用など自由に使ってください。
+'再配布する場合、本ライセンス全文をソースコード、もしくはライセンス表示ファイルなどに掲載してください。
 
 '------------------------------------------------
 'Class Variables
@@ -134,8 +134,13 @@ Private Sub CopyItem(ByRef work As Worksheet)
         CopyRange TemplateSheet, ItemRange, work, Range(Cells(RowIndex + ii, BaseCell_Column).Address)
         
         Dim jj As Integer
-        For jj = 0 To UBound(Fields)
-            work.Cells(RowIndex + ii, BaseCell_Column + jj).Value = SrcData.Fields(Fields(jj)).Value
+        For jj = 0 To ItemRange.Columns.Count
+            Dim InputFldName As String
+            InputFldName = work.Cells(RowIndex + ii, BaseCell_Column + jj).Value
+            
+            If InputFldName <> "" Then
+                work.Cells(RowIndex + ii, BaseCell_Column + jj).Value = SrcData.Fields(InputFldName)
+            End If
         Next
         
         SrcData.MoveNext
