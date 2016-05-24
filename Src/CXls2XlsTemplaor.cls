@@ -121,14 +121,7 @@ Private Sub CopyItem(ByRef work As Worksheet)
 
     Dim RowIndex As Integer
     RowIndex = BaseCell_Row + HeaderRange.Rows.Count
-    
-    Dim ll As Integer
-    Dim Fields() As String
-    For ll = 0 To SrcData.Fields.Count - 1
-        ReDim Preserve Fields(ll)
-        Fields(ll) = SrcData.Fields(ll).Name
-    Next
-    
+
     Dim ii As Integer
     For ii = 0 To SrcData.RecordCount - 1
         CopyRange TemplateSheet, ItemRange, work, Range(Cells(RowIndex + ii, BaseCell_Column).Address)
