@@ -159,7 +159,6 @@ End Sub
 Private Sub CopyRange(ByRef SrcSheet As Worksheet, SrcRange As Range, _
                                        ByRef DirSheet As Worksheet, BasePoint As Range)
 
-    Application.ScreenUpdating = False
     Dim ActiveSheetName As String: ActiveSheetName = ActiveSheet.Name
     SrcSheet.Activate
     SrcSheet.Range(SrcRange.Address).Select
@@ -170,7 +169,6 @@ Private Sub CopyRange(ByRef SrcSheet As Worksheet, SrcRange As Range, _
     DirSheet.Paste
     
     Application.CutCopyMode = False
-    Application.ScreenUpdating = True
 End Sub
 
 'Validation of Param, Return Value is Success: TRUE Failure: FALSE
