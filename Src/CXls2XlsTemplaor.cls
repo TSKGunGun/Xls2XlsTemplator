@@ -92,29 +92,33 @@ Public Function Execute() As Boolean
     Execute = False
     If Not ValidationParam Then Exit Function
     
-    On Error GoTo ensure:
+    On Error GoTo catch:
     Dim work As Worksheet
     Set work = ActiveWorkbook.Worksheets.Add
     
+    On Error GoTo ensure:
     If Not HeaderRange Is Nothing Then CopyHeader work
     
     CopyItem work
     
     If Not FooterRange Is Nothing Then CopyFooter work
     
-    MsgBox "Finish", vbOKOnly + vbInformation
-
+    CopyRange work, GetTemplateRange, DirSheet, GetBaseCell
+    Execute = True
+    Debug.Print "CXls2XlsTemplator's Execute Succes!"
 ensure:
-    'work.Delete
+    DeleteSheet work
+    Exit Function
+
+catch:
+    Debug.Print "CXls2XlsTemplator's Execute Failled!"
 End Function
 
 '------------------------------------------------
 'Private Procedures
 '------------------------------------------------[
 Private Sub CopyHeader(ByRef work As Worksheet)
-    Dim BaseCell As Range
-    Set BaseCell = Range(Cells(BaseCell_Row, BaseCell_Column).Address)
-    CopyRange TemplateSheet, HeaderRange, work, BaseCell
+    CopyRange TemplateSheet, HeaderRange, work, GetBaseCell
 End Sub
 
 Private Sub CopyItem(ByRef work As Worksheet)
@@ -176,3 +180,36 @@ Private Function ValidationParam() As Boolean
     ValidationParam = ValidationParam And BaseCell_Row <> 0
     ValidationParam = ValidationParam And BaseCell_Column <> 0
 End Function
+
+Private Function GetTemplateRange() As Range
+    
+    Dim RowCount, ColumnCount As Integer
+    RowCount = SrcData.RecordCount
+    ColumnCount = SrcData.Fields.Count
+    
+    If Not HeaderRange Is Nothing Then
+        RowCount = RowCount + HeaderRange.Rows.Count
+        If HeaderRange.Columns.Count > ColumnCount Then _
+            ColumnCount = HeaderRange.Columns.Count
+    End If
+            
+    If Not FooterRange Is Nothing Then
+        RowCount = RowCount + FooterRange.Rows.Count
+          If FooterRange.Columns.Count > ColumnCount Then _
+            ColumnCount = FooterRange.Columns.Count
+    End If
+    
+    Set GetTemplateRange = GetBaseCell.Resize(RowCount, ColumnCount)
+ 
+End Function
+
+Private Function GetBaseCell() As Range
+    Set GetBaseCell = Range(Cells(BaseCell_Row, BaseCell_Column).Address)
+End Function
+
+Private Sub DeleteSheet(ByRef DeleteSheet As Worksheet)
+    Application.DisplayAlerts = False
+    DeleteSheet.Delete
+    Debug.Print "CXls2XlsTemplator's Worksheet Delete Completed"
+    Application.DisplayAlerts = True
+End Sub
