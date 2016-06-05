@@ -131,11 +131,11 @@ Private Sub CopyItem(ByRef work As Worksheet)
 
     Dim RowIndex As Integer
     RowIndex = BaseCell_Row + HeaderRange.Rows.Count
-
+    
+    Dim StartT, StopT As Date: StartT = Time
+    CopyRange TemplateSheet, ItemRange, work, Cells(RowIndex, BaseCell_Column), SrcData.RecordCount
     Dim ii As Integer
     For ii = 0 To SrcData.RecordCount - 1
-        CopyRange TemplateSheet, ItemRange, work, Range(Cells(RowIndex + ii, BaseCell_Column).Address)
-        
         Dim jj As Integer
         For jj = 0 To ItemRange.Columns.Count
             Dim InputFldName As String
@@ -148,6 +148,10 @@ Private Sub CopyItem(ByRef work As Worksheet)
         
         SrcData.MoveNext
     Next
+
+    StopT = Time - StartT
+    
+    Debug.Print Minute(StopT) & "M" & Second(StopT) & "S"
     
 End Sub
 
@@ -160,7 +164,7 @@ Private Sub CopyFooter(ByRef work As Worksheet)
 End Sub
 
 Private Sub CopyRange(ByRef SrcSheet As Worksheet, SrcRange As Range, _
-                                       ByRef DirSheet As Worksheet, BasePoint As Range)
+                                       ByRef DirSheet As Worksheet, BasePoint As Range, Optional Count As Integer = 1)
 
     Dim ActiveSheetName As String: ActiveSheetName = ActiveSheet.Name
     SrcSheet.Activate
@@ -168,9 +172,12 @@ Private Sub CopyRange(ByRef SrcSheet As Worksheet, SrcRange As Range, _
     Selection.Copy
     
     DirSheet.Activate
-    DirSheet.Range(BasePoint.Address).Select
-    DirSheet.Paste
     
+    Dim ii As Integer
+    For ii = 0 To Count - 1
+        DirSheet.Range(Cells(BasePoint.Row + ii, BasePoint.Column).Address).Select
+        DirSheet.Paste
+    Next
     Application.CutCopyMode = False
 End Sub
 
