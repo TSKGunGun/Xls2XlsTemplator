@@ -41,6 +41,10 @@ Private BaseCell_Column As Integer
 Public HeaderRange As Range
 Public ItemRange As Range
 Public FooterRange As Range
+
+'Other Setting
+Public ColumnWide As Boolean
+
 '------------------------------------------------
 'Class Procedures
 '------------------------------------------------
@@ -54,6 +58,7 @@ Private Sub Class_initialize()
     Set SrcData = Nothing
     BaseCell_Row = 0
     BaseCell_Column = 0
+    ColumnWide = True
 End Sub
 
 'Destructor
@@ -100,6 +105,7 @@ Public Function Execute() As Boolean
     If Not HeaderRange Is Nothing Then CopyHeader work
     
     CopyItem work
+    If ColumnWide Then ModColumnWides
     
     If Not FooterRange Is Nothing Then CopyFooter work
     
@@ -213,3 +219,15 @@ Private Sub DeleteSheet(ByRef DeleteSheet As Worksheet)
     Debug.Print "CXls2XlsTemplator's Worksheet Delete Completed"
     Application.DisplayAlerts = True
 End Sub
+
+Private Sub ModColumnWides()
+    Dim ColumnIndex As Integer
+    
+    Dim DirCol, SrcCol As Range
+    Set DirCol = DirSheet.Range(GetTemplateRange.Columns.Address)
+    Set SrcCol = TemplateSheet.Range(ItemRange.Columns.Address)
+    For ColumnIndex = 1 To DirCol.Columns.Count
+        DirCol(ColumnIndex).ColumnWidth = SrcCol(ColumnIndex).ColumnWidth
+    Next
+End Sub
+
