@@ -132,7 +132,6 @@ Private Sub CopyItem(ByRef work As Worksheet)
     Dim RowIndex As Integer
     RowIndex = BaseCell_Row + HeaderRange.Rows.Count
     
-    Dim StartT, StopT As Date: StartT = Time
     CopyRange TemplateSheet, ItemRange, work, Cells(RowIndex, BaseCell_Column), SrcData.RecordCount
     Dim ii As Integer
     For ii = 0 To SrcData.RecordCount - 1
@@ -148,10 +147,6 @@ Private Sub CopyItem(ByRef work As Worksheet)
         
         SrcData.MoveNext
     Next
-
-    StopT = Time - StartT
-    
-    Debug.Print Minute(StopT) & "M" & Second(StopT) & "S"
     
 End Sub
 
