@@ -2,7 +2,7 @@ VERSION 1.0 CLASS
 BEGIN
   MultiUse = -1  'True
 END
-Attribute VB_Name = "CXls2XlsTemplaor"
+Attribute VB_Name = "CXls2XlsTemplate"
 Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
@@ -69,9 +69,9 @@ End Sub
 '------------------------------------------------
 'Public Procedures
 '------------------------------------------------
-Public Sub SetRange(Header As Range, Item As Range, Footer As Range)
+Public Sub SetRange(Header As Range, item As Range, Footer As Range)
     Set HeaderRange = Header
-    Set ItemRange = Item
+    Set ItemRange = item
     Set FooterRange = Footer
 End Sub
 
@@ -95,7 +95,10 @@ End Sub
 'Return Value is Success : TRUE Failure:FALSE
 Public Function Execute() As Boolean
     Execute = False
-    If Not ValidationParam Then Exit Function
+    If Not ValidationParam Then
+        Debug.Print "必要なパラメータが足りません"
+        Exit Function
+    End If
     
     On Error GoTo catch:
     Dim work As Worksheet
@@ -103,6 +106,7 @@ Public Function Execute() As Boolean
     
     On Error GoTo ensure:
     If Not HeaderRange Is Nothing Then CopyHeader work
+    
     
     CopyItem work
     If ColumnWide Then ModColumnWides
@@ -141,7 +145,7 @@ Private Sub CopyItem(ByRef work As Worksheet)
             InputFldName = work.Cells(RowIndex + ii, BaseCell_Column + jj).Value
             
             If InputFldName <> "" Then
-                work.Cells(RowIndex + ii, BaseCell_Column + jj).Value = SrcData.Fields(InputFldName)
+                work.Cells(RowIndex + ii, BaseCell_Column + jj).Value = IIf(SrcData.Fields(InputFldName) = 0, "", SrcData.Fields(InputFldName))
             End If
         Next
         
@@ -232,4 +236,5 @@ Private Sub ModColumnWides()
         DirCol(ColumnIndex).ColumnWidth = SrcCol(ColumnIndex).ColumnWidth
     Next
 End Sub
+
 
